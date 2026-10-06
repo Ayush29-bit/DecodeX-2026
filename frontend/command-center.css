@@ -1,0 +1,556 @@
+/* ============================================================
+   Command Center — extra styles layered on top of style.css
+   ============================================================ */
+
+.cc-body .container,
+.cc-body {
+    background: #e8edf4;
+}
+
+.cc-header {
+    background: #10233d;
+    border-bottom: 3px solid var(--danger);
+}
+
+.cc-header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.cc-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.cc-badge {
+    margin-left: 4px;
+    padding: 5px 11px;
+    border-radius: 6px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+/* ---------- Summary ---------- */
+
+.cc-main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 22px 22px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cc-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.cc-stat {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--brand);
+    border-radius: 12px;
+    padding: 15px 18px;
+    box-shadow: 0 1px 3px rgba(15, 28, 46, .06);
+}
+
+.cc-stat-label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.cc-stat-value {
+    display: block;
+    margin-top: 4px;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-critical { border-left-color: var(--danger); }
+.stat-critical .cc-stat-value { color: var(--danger); }
+.stat-dispatched { border-left-color: var(--warn); }
+.stat-dispatched .cc-stat-value { color: var(--warn); }
+.stat-resolved { border-left-color: var(--ok); }
+.stat-resolved .cc-stat-value { color: var(--ok); }
+
+/* ---------- Layout ---------- */
+
+.cc-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.cc-panel {
+    padding: 20px;
+}
+
+.cc-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.cc-filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.cc-select {
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.cc-select:focus {
+    outline: none;
+    border-color: var(--brand);
+}
+
+.cc-select-grow {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* ---------- Incident list ---------- */
+
+.cc-incidents-panel .card-header {
+    margin-bottom: 14px;
+}
+
+.cc-incident-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 620px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.cc-incident {
+    border: 1.5px solid var(--line);
+    border-left: 5px solid var(--ink-soft);
+    border-radius: 11px;
+    padding: 14px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+    transition: border-color .12s, background .12s;
+}
+
+.cc-incident:hover {
+    background: #f7f9fc;
+}
+
+.cc-incident.selected {
+    border-color: var(--brand);
+    background: #eef4fd;
+}
+
+.cc-incident.is-critical {
+    background: #fdf4f5;
+}
+
+.cc-incident.is-critical.selected {
+    background: #fbe9eb;
+}
+
+.cc-incident-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 9px;
+}
+
+.cc-incident-id {
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+.cc-incident-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.cc-incident-type {
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.cc-sev {
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+.cc-sev-Normal { background: #e2f3ea; color: var(--ok); }
+.cc-sev-High { background: #fdf0da; color: var(--warn); }
+.cc-sev-Critical { background: #fadfe3; color: var(--danger); }
+
+.cc-incident-desc {
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-bottom: 10px;
+    word-break: break-word;
+}
+
+.cc-incident-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
+}
+
+.cc-meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.cc-meta-row span:first-child {
+    font-weight: 700;
+    color: var(--ink-soft);
+}
+
+.cc-meta-row span:last-child {
+    font-weight: 600;
+    text-align: right;
+    word-break: break-word;
+}
+
+.cc-locate {
+    margin-top: 11px;
+    width: 100%;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    color: #fff;
+    background: var(--danger);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.cc-locate:hover {
+    background: var(--danger-dark);
+}
+
+.cc-locate.team-set {
+    background: var(--ink-soft);
+    cursor: default;
+}
+
+/* ---------- Status pills ---------- */
+
+.cc-pill {
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.cc-pill-REPORTED { background: #fdecec; color: var(--danger); }
+.cc-pill-DISPATCHED { background: #fdf0da; color: var(--warn); }
+.cc-pill-RESPONDING { background: #e6eefb; color: var(--brand); }
+.cc-pill-RESOLVED { background: #e2f3ea; color: var(--ok); }
+
+.cc-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.cc-dot-REPORTED { background: var(--danger); }
+.cc-dot-DISPATCHED { background: var(--warn); }
+.cc-dot-RESPONDING { background: var(--brand); }
+.cc-dot-RESOLVED { background: var(--ok); }
+
+/* ---------- Details ---------- */
+
+.cc-details-panel .card-header {
+    margin-bottom: 16px;
+}
+
+.cc-detail-hero {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+}
+
+.cc-detail-icon {
+    font-size: 32px;
+}
+
+.cc-detail-id {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    color: var(--ink-soft);
+}
+
+.cc-detail-type {
+    display: block;
+    font-size: 19px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.cc-detail-hero .cc-pill {
+    margin-left: auto;
+}
+
+.cc-detail-list {
+    margin-bottom: 20px;
+}
+
+.cc-detail-list dd {
+    max-width: 62%;
+}
+
+.cc-action-block {
+    margin-bottom: 20px;
+}
+
+.cc-action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cc-status-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.btn-cc-primary,
+.btn-cc-secondary,
+.btn-cc-success {
+    padding: 12px 20px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    border-radius: 9px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-cc-primary {
+    color: #fff;
+    background: var(--danger);
+}
+
+.btn-cc-primary:hover:not(:disabled) { background: var(--danger-dark); }
+
+.btn-cc-secondary {
+    color: #fff;
+    background: var(--brand);
+}
+
+.btn-cc-secondary:hover:not(:disabled) { background: var(--brand-dark); }
+
+.btn-cc-success {
+    color: #fff;
+    background: var(--ok);
+}
+
+.btn-cc-success:hover:not(:disabled) { background: #14603a; }
+
+.btn-cc-primary:disabled,
+.btn-cc-secondary:disabled,
+.btn-cc-success:disabled {
+    background: #c3ccd8;
+    color: #f2f5f9;
+    cursor: not-allowed;
+}
+
+.cc-progress {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.cc-progress-step {
+    padding: 8px 6px;
+    border-radius: 8px;
+    background: #eef1f6;
+    color: #8794a6;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.cc-progress-step.done {
+    background: #dceafd;
+    color: var(--brand);
+}
+
+.cc-progress-step.current {
+    background: var(--brand);
+    color: #fff;
+}
+
+.cc-history {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.cc-history li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 12px;
+    background: #f5f7fa;
+    border-radius: 8px;
+    font-size: 12.5px;
+}
+
+.cc-history li span:first-child {
+    font-weight: 800;
+}
+
+.cc-history li span:last-child {
+    color: var(--ink-soft);
+    text-align: right;
+}
+
+.cc-empty {
+    padding: 26px 16px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+}
+
+.cc-empty a {
+    color: var(--brand);
+    font-weight: 700;
+}
+
+/* ---------- Map ---------- */
+
+.cc-map-panel .card-header {
+    margin-bottom: 14px;
+}
+
+.cc-map {
+    height: 380px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: #e3e9f1;
+    z-index: 0;
+}
+
+.leaflet-popup-content {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
+.cc-popup-title {
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.cc-popup-row {
+    font-size: 12px;
+    color: #41536b;
+}
+
+.cc-map-note {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 980px) {
+    .cc-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cc-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cc-incident-list {
+        max-height: none;
+    }
+}
+
+@media (max-width: 620px) {
+    .cc-header-inner {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .cc-detail-hero .cc-pill {
+        margin-left: 0;
+    }
+
+    .cc-stat-value {
+        font-size: 25px;
+    }
+}

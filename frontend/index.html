@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Emergency Response</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <div class="brand">
+                <span class="brand-mark">CES</span>
+                <div class="brand-text">
+                    <h1>Campus Emergency Response</h1>
+                    <p>Report an emergency to the campus command center</p>
+                </div>
+            </div>
+            <div class="status-chip" id="systemStatus">
+                <span class="status-dot"></span>
+                <span id="systemStatusText">System Online</span>
+            </div>
+
+            <nav class="view-nav" aria-label="Views">
+                <a class="view-nav-link active" href="index.html">Report Emergency</a>
+                <a class="view-nav-link" href="command-center.html">Command Center</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="card sos-card">
+            <button type="button" id="sosButton" class="sos-button">
+                <span class="sos-button-icon">🚨</span>
+                <span class="sos-button-text">
+                    <strong>SEND EMERGENCY SOS</strong>
+                    <small>Alerts the campus command center immediately</small>
+                </span>
+            </button>
+        </section>
+
+        <section class="card form-card" id="sosForm">
+
+            <div class="card-header">
+                <h2>Emergency Details</h2>
+                <span class="step-label">Step 1 of 1</span>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Emergency Type <span class="required">*</span></label>
+                <div class="option-grid" id="typeGroup" role="radiogroup" aria-label="Emergency type">
+                    <button type="button" class="option-card" data-type="Fire" role="radio" aria-checked="false">
+                        <span class="option-icon">🔥</span>
+                        <span class="option-name">Fire</span>
+                    </button>
+                    <button type="button" class="option-card" data-type="Medical" role="radio" aria-checked="false">
+                        <span class="option-icon">🏥</span>
+                        <span class="option-name">Medical</span>
+                    </button>
+                    <button type="button" class="option-card" data-type="Earthquake" role="radio" aria-checked="false">
+                        <span class="option-icon">🌎</span>
+                        <span class="option-name">Earthquake</span>
+                    </button>
+                    <button type="button" class="option-card" data-type="Other" role="radio" aria-checked="false">
+                        <span class="option-icon">⚠️</span>
+                        <span class="option-name">Other</span>
+                    </button>
+                </div>
+                <p class="field-error" id="typeError"></p>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Severity <span class="required">*</span></label>
+                <div class="option-grid severity-grid" id="severityGroup" role="radiogroup" aria-label="Severity">
+                    <button type="button" class="option-card severity-normal" data-severity="Normal" role="radio" aria-checked="false">
+                        <span class="option-name">Normal</span>
+                        <small>Respond when possible</small>
+                    </button>
+                    <button type="button" class="option-card severity-high" data-severity="High" role="radio" aria-checked="false">
+                        <span class="option-name">High</span>
+                        <small>Respond immediately</small>
+                    </button>
+                    <button type="button" class="option-card severity-critical" data-severity="Critical" role="radio" aria-checked="false">
+                        <span class="option-name">Critical</span>
+                        <small>Life threatening</small>
+                    </button>
+                </div>
+                <p class="field-error" id="severityError"></p>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="description">Description <span class="required">*</span></label>
+                <textarea
+                    id="description"
+                    placeholder="Describe what is happening..."
+                    rows="4"
+                ></textarea>
+                <p class="field-error" id="descriptionError"></p>
+            </div>
+
+            <div class="field">
+                <label class="field-label">📍 Location <span class="required">*</span></label>
+                <div class="location-box">
+                    <p class="location-value" id="locationText">Location not detected yet.</p>
+                    <button type="button" id="locationBtn" class="btn-secondary">Detect My Location</button>
+                </div>
+                <p class="field-error" id="locationError"></p>
+            </div>
+
+            <button type="button" id="sendBtn" class="btn-send">SEND SOS</button>
+
+            <p class="form-note">Your location is sent only with this emergency report.</p>
+        </section>
+
+        <section class="card response-card hidden" id="responseCard">
+            <div class="response-head">
+                <span class="response-icon">✅</span>
+                <h2 id="responseTitle">Emergency reported successfully.</h2>
+            </div>
+
+            <dl class="response-list">
+                <div class="response-row">
+                    <dt>Request Status</dt>
+                    <dd id="responseStatus">—</dd>
+                </div>
+                <div class="response-row">
+                    <dt>Emergency Type</dt>
+                    <dd id="responseType">—</dd>
+                </div>
+                <div class="response-row">
+                    <dt>Severity</dt>
+                    <dd id="responseSeverity">—</dd>
+                </div>
+                <div class="response-row">
+                    <dt>Location</dt>
+                    <dd id="responseLocation">—</dd>
+                </div>
+                <div class="response-row">
+                    <dt>Incident ID</dt>
+                    <dd id="responseIncident">—</dd>
+                </div>
+            </dl>
+
+            <button type="button" id="resetBtn" class="btn-secondary">Report Another Emergency</button>
+        </section>
+
+        <section class="card error-card hidden" id="errorCard">
+            <div class="error-head">
+                <span class="error-icon">⚠️</span>
+                <h2>Could not send emergency report</h2>
+            </div>
+            <p id="errorMessage">Something went wrong. Please try again.</p>
+        </section>
+
+    </main>
+
+    <footer class="app-footer">
+        <span id="demoNote">Demo backend · FastAPI</span>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

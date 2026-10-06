@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center · Campus Emergency Response</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="command-center.css">
+</head>
+
+<body class="cc-body">
+
+    <header class="app-header cc-header">
+        <div class="cc-header-inner">
+            <div class="brand">
+                <span class="brand-mark">CES</span>
+                <div class="brand-text">
+                    <h1>Campus Emergency Response</h1>
+                    <p>Responder console for active campus incidents</p>
+                </div>
+                <span class="cc-badge">COMMAND CENTER</span>
+            </div>
+
+            <div class="cc-header-right">
+                <div class="status-chip" id="systemStatus">
+                    <span class="status-dot"></span>
+                    <span id="systemStatusText">System Online</span>
+                </div>
+
+                <nav class="view-nav" aria-label="Views">
+                    <a class="view-nav-link" href="index.html">Report Emergency</a>
+                    <a class="view-nav-link active" href="command-center.html">Command Center</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="cc-main">
+
+        <section class="cc-summary" aria-label="Incident summary">
+            <div class="cc-stat">
+                <span class="cc-stat-label">Active Incidents</span>
+                <span class="cc-stat-value" id="statActive">0</span>
+            </div>
+            <div class="cc-stat stat-critical">
+                <span class="cc-stat-label">Critical</span>
+                <span class="cc-stat-value" id="statCritical">0</span>
+            </div>
+            <div class="cc-stat stat-dispatched">
+                <span class="cc-stat-label">Dispatched</span>
+                <span class="cc-stat-value" id="statDispatched">0</span>
+            </div>
+            <div class="cc-stat stat-resolved">
+                <span class="cc-stat-label">Resolved</span>
+                <span class="cc-stat-value" id="statResolved">0</span>
+            </div>
+        </section>
+
+        <div class="cc-layout">
+
+            <section class="card cc-panel cc-incidents-panel" aria-label="Active incidents">
+                <div class="card-header">
+                    <h2>Active Incidents</h2>
+                    <span class="step-label" id="listMeta">Waiting for data…</span>
+                </div>
+
+                <div class="cc-filter-row">
+                    <label class="cc-filter-label" for="filterSelect">Show</label>
+                    <select id="filterSelect" class="cc-select">
+                        <option value="active">Active only</option>
+                        <option value="all">All incidents</option>
+                        <option value="REPORTED">Reported</option>
+                        <option value="DISPATCHED">Dispatched</option>
+                        <option value="RESPONDING">Responding</option>
+                        <option value="RESOLVED">Resolved</option>
+                    </select>
+                </div>
+
+                <div id="incidentList" class="cc-incident-list"></div>
+
+                <p id="incidentEmpty" class="cc-empty">
+                    No incidents yet. Send an SOS from the
+                    <a href="index.html">Report Emergency</a> page to see it appear here.
+                </p>
+            </section>
+
+            <section class="card cc-panel cc-details-panel" aria-label="Incident details">
+                <div class="card-header">
+                    <h2>Incident Details</h2>
+                    <span class="step-label" id="detailMeta">No incident selected</span>
+                </div>
+
+                <div id="detailEmpty" class="cc-empty">Select an incident to view full details.</div>
+
+                <div id="detailBody" class="hidden">
+
+                    <div class="cc-detail-hero">
+                        <span class="cc-detail-icon" id="detailIcon">🚨</span>
+                        <div>
+                            <span class="cc-detail-id" id="detailId">—</span>
+                            <span class="cc-detail-type" id="detailType">—</span>
+                        </div>
+                        <span class="cc-pill" id="detailStatus">REPORTED</span>
+                    </div>
+
+                    <dl class="response-list cc-detail-list">
+                        <div class="response-row">
+                            <dt>Severity</dt>
+                            <dd id="detailSeverity">—</dd>
+                        </div>
+                        <div class="response-row">
+                            <dt>Description</dt>
+                            <dd id="detailDescription">—</dd>
+                        </div>
+                        <div class="response-row">
+                            <dt>GPS Coordinates</dt>
+                            <dd id="detailCoords">—</dd>
+                        </div>
+                        <div class="response-row">
+                            <dt>Reported</dt>
+                            <dd id="detailTime">—</dd>
+                        </div>
+                        <div class="response-row">
+                            <dt>Assigned Team</dt>
+                            <dd id="detailTeam">Not assigned</dd>
+                        </div>
+                    </dl>
+
+                    <div class="cc-action-block">
+                        <label class="field-label" for="teamSelect">Dispatch Response Team</label>
+                        <div class="cc-action-row">
+                            <select id="teamSelect" class="cc-select cc-select-grow"></select>
+                            <button type="button" id="dispatchBtn" class="btn-cc-primary">DISPATCH TEAM</button>
+                        </div>
+                    </div>
+
+                    <div class="cc-action-block">
+                        <label class="field-label">Response Progress</label>
+                        <div class="cc-status-actions">
+                            <button type="button" id="respondingBtn" class="btn-cc-secondary" disabled>MARK RESPONDING</button>
+                            <button type="button" id="resolvedBtn" class="btn-cc-success" disabled>MARK RESOLVED</button>
+                        </div>
+                        <div class="cc-progress">
+                            <div class="cc-progress-step" data-step="REPORTED">Reported</div>
+                            <div class="cc-progress-step" data-step="DISPATCHED">Dispatched</div>
+                            <div class="cc-progress-step" data-step="RESPONDING">Responding</div>
+                            <div class="cc-progress-step" data-step="RESOLVED">Resolved</div>
+                        </div>
+                    </div>
+
+                    <div class="cc-action-block">
+                        <span class="field-label">Activity Log</span>
+                        <ul class="cc-history" id="detailHistory"></ul>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+        <section class="card cc-panel cc-map-panel" aria-label="Incident map">
+            <div class="card-header">
+                <h2>Campus Incident Map</h2>
+                <span class="step-label" id="mapMeta">OpenStreetMap · Leaflet CDN</span>
+            </div>
+            <div id="map" class="cc-map"></div>
+        </section>
+
+    </main>
+
+    <footer class="app-footer">
+        <span>Demo backend · FastAPI · In-memory incident store · Auto-refresh every 2.5s</span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="anonymous"></script>
+    <script src="command-center.js"></script>
+</body>
+</html>
