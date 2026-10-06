@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center · Campus Emergency Response</title>
+    <title>Disaster Command Center · CampusResQ</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -17,12 +17,12 @@
     <header class="app-header cc-header">
         <div class="cc-header-inner">
             <div class="brand">
-                <span class="brand-mark">CES</span>
+                <span class="brand-mark">CRQ</span>
                 <div class="brand-text">
-                    <h1>Campus Emergency Response</h1>
-                    <p>Responder console for active campus incidents</p>
+                    <h1>CampusResQ</h1>
+                    <p>Campus Disaster Management &amp; Response</p>
                 </div>
-                <span class="cc-badge">COMMAND CENTER</span>
+                <span class="cc-badge">DISASTER COMMAND CENTER</span>
             </div>
 
             <div class="cc-header-right">
@@ -33,7 +33,7 @@
 
                 <nav class="view-nav" aria-label="Views">
                     <a class="view-nav-link" href="index.html">Report Emergency</a>
-                    <a class="view-nav-link active" href="command-center.html">Command Center</a>
+                    <a class="view-nav-link active" href="command-center.html">Disaster Command Center</a>
                 </nav>
             </div>
         </div>
@@ -76,8 +76,10 @@
                         <option value="REPORTED">Reported</option>
                         <option value="DISPATCHED">Dispatched</option>
                         <option value="RESPONDING">Responding</option>
+                        <option value="ON_SCENE">On Scene</option>
                         <option value="RESOLVED">Resolved</option>
                     </select>
+                    <button type="button" id="clearAllBtn" class="cc-clear-btn">Clear All</button>
                 </div>
 
                 <div id="incidentList" class="cc-incident-list"></div>
@@ -107,10 +109,23 @@
                         <span class="cc-pill" id="detailStatus">REPORTED</span>
                     </div>
 
+                    <div class="cc-recommend" id="detailRecommend">
+                        <div class="cc-recommend-head">
+                            <span class="cc-recommend-label">Recommended Response</span>
+                            <span class="cc-recommend-tag">Rule-based</span>
+                        </div>
+                        <div class="cc-recommend-teams" id="detailRecommendTeams"></div>
+                        <p class="cc-recommend-reason" id="detailRecommendReason"></p>
+                    </div>
+
                     <dl class="response-list cc-detail-list">
                         <div class="response-row">
                             <dt>Severity</dt>
                             <dd id="detailSeverity">—</dd>
+                        </div>
+                        <div class="response-row hidden" id="detailTextRow">
+                            <dt>What happened</dt>
+                            <dd id="detailIncidentText">—</dd>
                         </div>
                         <div class="response-row">
                             <dt>Description</dt>
@@ -142,12 +157,14 @@
                         <label class="field-label">Response Progress</label>
                         <div class="cc-status-actions">
                             <button type="button" id="respondingBtn" class="btn-cc-secondary" disabled>MARK RESPONDING</button>
+                            <button type="button" id="onSceneBtn" class="btn-cc-secondary" disabled>MARK ON SCENE</button>
                             <button type="button" id="resolvedBtn" class="btn-cc-success" disabled>MARK RESOLVED</button>
                         </div>
                         <div class="cc-progress">
                             <div class="cc-progress-step" data-step="REPORTED">Reported</div>
                             <div class="cc-progress-step" data-step="DISPATCHED">Dispatched</div>
                             <div class="cc-progress-step" data-step="RESPONDING">Responding</div>
+                            <div class="cc-progress-step" data-step="ON_SCENE">On Scene</div>
                             <div class="cc-progress-step" data-step="RESOLVED">Resolved</div>
                         </div>
                     </div>

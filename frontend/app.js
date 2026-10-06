@@ -1,4 +1,7 @@
-const API_URL = "http://127.0.0.1:8000/api/analyze";
+const API_BASE = "http://127.0.0.1:8000/api";
+const API_URL = API_BASE + "/analyze";
+const HEALTH_URL = API_BASE + "/health";
+const HEALTH_POLL_MS = 4000;
 
 const sosButton = document.getElementById("sosButton");
 const sendBtn = document.getElementById("sendBtn");
@@ -6,18 +9,23 @@ const resetBtn = document.getElementById("resetBtn");
 const locationBtn = document.getElementById("locationBtn");
 const locationText = document.getElementById("locationText");
 const description = document.getElementById("description");
+const incidentTextField = document.getElementById("incidentTextField");
+const incidentText = document.getElementById("incidentText");
 const typeGroup = document.getElementById("typeGroup");
 const severityGroup = document.getElementById("severityGroup");
 const formCard = document.getElementById("sosForm");
 const responseCard = document.getElementById("responseCard");
 const errorCard = document.getElementById("errorCard");
 const errorMessage = document.getElementById("errorMessage");
+const systemStatus = document.getElementById("systemStatus");
+const systemStatusText = document.getElementById("systemStatusText");
 
 const errors = {
     type: document.getElementById("typeError"),
     severity: document.getElementById("severityError"),
     description: document.getElementById("descriptionError"),
-    location: document.getElementById("locationError")
+    location: document.getElementById("locationError"),
+    incidentText: document.getElementById("incidentTextError")
 };
 
 const state = {
@@ -26,6 +34,30 @@ const state = {
     latitude: null,
     longitude: null
 };
+
+/* ---------- Backend connection status ---------- */
+
+function setSystemStatus(online) {
+    systemStatus.classList.toggle("is-offline", !online);
+    systemStatusText.textContent = online ? "System Online" : "Backend Offline";
+}
+
+async function checkBackend() {
+    try {
+        const response = await fetch(HEALTH_URL, { cache: "no-store" });
+        if (!response.ok) {
+            throw new Error("Health check returned " + response.status);
+        }
+        setSystemStatus(true);
+        return true;
+    } catch (error) {
+        setSystemStatus(false);
+        return false;
+    }
+}
+
+checkBackend();
+setInterval(checkBackend, HEALTH_POLL_MS);
 
 /* ---------- Selection helpers ---------- */
 
@@ -42,7 +74,7 @@ function clearError(key) {
     errors[key].classList.remove("visible");
 }
 
-function showError(key, message) {
+function showFieldError(key, message) {
     errors[key].textContent = message;
     errors[key].classList.add("visible");
 }
@@ -52,7 +84,25 @@ typeGroup.querySelectorAll(".option-card").forEach((card) => {
         state.emergencyType = card.dataset.type;
         selectOption(typeGroup, card);
         clearError("type");
+        syncIncidentTextField();
     });
+});
+
+function syncIncidentTextField() {
+    const isOther = state.emergencyType === "Other";
+    incidentTextField.classList.toggle("hidden", !isOther);
+
+    if (!isOther) {
+        incidentText.classList.remove("invalid");
+        clearError("incidentText");
+    }
+}
+
+incidentText.addEventListener("input", () => {
+    if (incidentText.value.trim() !== "") {
+        incidentText.classList.remove("invalid");
+        clearError("incidentText");
+    }
 });
 
 severityGroup.querySelectorAll(".option-card").forEach((card) => {
@@ -83,7 +133,7 @@ function setLocationText(text, stateClass) {
 locationBtn.addEventListener("click", () => {
     if (!navigator.geolocation) {
         clearError("location");
-        showError("location", "This browser does not support location detection.");
+        showFieldError("location", "This browser does not support location detection.");
         setLocationText("Location unavailable on this device.", "failed");
         return;
     }
@@ -112,7 +162,7 @@ locationBtn.addEventListener("click", () => {
                 error.code === 1
                     ? "Location permission denied. Please allow location access and try again."
                     : "Could not detect your location. Please try again in an open area.";
-            showError("location", message);
+            showFieldError("location", message);
             setLocationText("Location unavailable.", "failed");
             document.querySelector(".location-box").classList.add("invalid");
             locationBtn.disabled = false;
@@ -128,22 +178,31 @@ function validate() {
     let valid = true;
 
     if (!state.emergencyType) {
-        showError("type", "Please select an emergency type.");
+        showFieldError("type", "Please select an emergency type.");
         valid = false;
     } else {
         clearError("type");
     }
 
     if (!state.severity) {
-        showError("severity", "Please select a severity level.");
+        showFieldError("severity", "Please select a severity level.");
         valid = false;
     } else {
         clearError("severity");
     }
 
+    if (state.emergencyType === "Other" && incidentText.value.trim() === "") {
+        incidentText.classList.add("invalid");
+        showFieldError("incidentText", "Please specify what happened.");
+        valid = false;
+    } else if (state.emergencyType === "Other") {
+        incidentText.classList.remove("invalid");
+        clearError("incidentText");
+    }
+
     if (description.value.trim() === "") {
         description.classList.add("invalid");
-        showError("description", "Please describe what is happening.");
+        showFieldError("description", "Please describe what is happening.");
         valid = false;
     } else {
         description.classList.remove("invalid");
@@ -152,7 +211,7 @@ function validate() {
 
     if (state.latitude === null || state.longitude === null) {
         document.querySelector(".location-box").classList.add("invalid");
-        showError("location", "Location is required. Click \"Detect My Location\" first.");
+        showFieldError("location", "Location is required. Click \"Detect My Location\" first.");
         valid = false;
     } else {
         clearError("location");
@@ -164,21 +223,25 @@ function validate() {
 /* ---------- Submit ---------- */
 
 async function sendEmergency() {
+    hide(errorCard);
+
     if (!validate()) {
         return;
     }
 
     sendBtn.disabled = true;
     sendBtn.textContent = "SENDING...";
-    hide(errorCard);
 
     const payload = {
         emergency_type: state.emergencyType,
         severity: state.severity,
         description: description.value.trim(),
+        incident_text: state.emergencyType === "Other" ? incidentText.value.trim() : "",
         latitude: state.latitude,
         longitude: state.longitude
     };
+
+    let failureMessage = null;
 
     try {
         const response = await fetch(API_URL, {
@@ -188,29 +251,57 @@ async function sendEmergency() {
         });
 
         if (!response.ok) {
-            throw new Error("Server responded with status " + response.status);
+            let detail = "";
+            try {
+                const body = await response.json();
+                if (body && body.detail) {
+                    detail = " Server detail: " + body.detail + ".";
+                }
+            } catch (parseError) {
+                console.warn("Could not parse error response", parseError);
+            }
+            failureMessage =
+                "The backend responded with an error (HTTP " + response.status + ")." +
+                detail + " Your SOS was not sent.";
+        } else {
+            const data = await response.json().catch(() => ({}));
+            setSystemStatus(true);
+            showSuccess(payload, data);
         }
-
-        const data = await response.json();
-        showSuccess(payload, data);
-
     } catch (error) {
         console.error(error);
-        formCard.classList.remove("hidden");
-        showError("Could not reach the emergency command center. Please check your connection and try again.");
+        setSystemStatus(false);
+        failureMessage =
+            "Cannot reach the CampusResQ backend at " + API_BASE + ". " +
+            "Your SOS was not sent. Start it with: " +
+            "cd C:\\DecodeX-2026\\backend && python -m uvicorn main:app --reload";
     } finally {
         sendBtn.disabled = false;
         sendBtn.textContent = "SEND SOS";
+    }
+
+    if (failureMessage) {
+        formCard.classList.remove("hidden");
+        showErrorCard(failureMessage);
     }
 }
 
 function showSuccess(payload, data) {
     document.getElementById("responseStatus").textContent =
-        data.status || data.result || "Received by command center";
+        data.status || data.result || "Received by Disaster Command Center";
     document.getElementById("responseType").textContent = payload.emergency_type;
     document.getElementById("responseSeverity").textContent = payload.severity;
     document.getElementById("responseLocation").textContent =
         `${payload.latitude}, ${payload.longitude}`;
+
+    const recommendationEl = document.getElementById("responseRecommendation");
+    const teams = (data && data.recommended_teams) || [];
+    if (teams.length > 0) {
+        recommendationEl.textContent = teams.join(" + ");
+        recommendationEl.parentElement.classList.remove("hidden");
+    } else {
+        recommendationEl.parentElement.classList.add("hidden");
+    }
     document.getElementById("responseIncident").textContent =
         data.incident_id || data.id || "Assigned on receipt";
 
@@ -220,7 +311,7 @@ function showSuccess(payload, data) {
     responseCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function showError(message) {
+function showErrorCard(message) {
     errorMessage.textContent = message;
     errorCard.classList.remove("hidden");
     errorCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -257,6 +348,9 @@ resetBtn.addEventListener("click", () => {
 
     description.value = "";
     description.classList.remove("invalid");
+    incidentText.value = "";
+    incidentText.classList.remove("invalid");
+    incidentTextField.classList.add("hidden");
     document.querySelector(".location-box").classList.remove("invalid");
     setLocationText("Location not detected yet.");
     locationBtn.textContent = "Detect My Location";

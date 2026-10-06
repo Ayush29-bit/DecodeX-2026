@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Emergency Response</title>
+    <title>CampusResQ · Campus Disaster Management</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,10 +13,11 @@
     <header class="app-header">
         <div class="app-header-inner">
             <div class="brand">
-                <span class="brand-mark">CES</span>
+                <span class="brand-mark">CRQ</span>
                 <div class="brand-text">
-                    <h1>Campus Emergency Response</h1>
-                    <p>Report an emergency to the campus command center</p>
+                    <h1>CampusResQ</h1>
+                    <p>Campus Disaster Management &amp; Response System</p>
+                    <p class="brand-sub">Report a Campus Emergency</p>
                 </div>
             </div>
             <div class="status-chip" id="systemStatus">
@@ -26,7 +27,7 @@
 
             <nav class="view-nav" aria-label="Views">
                 <a class="view-nav-link active" href="index.html">Report Emergency</a>
-                <a class="view-nav-link" href="command-center.html">Command Center</a>
+                <a class="view-nav-link" href="command-center.html">Disaster Command Center</a>
             </nav>
         </div>
     </header>
@@ -38,7 +39,7 @@
                 <span class="sos-button-icon">🚨</span>
                 <span class="sos-button-text">
                     <strong>SEND EMERGENCY SOS</strong>
-                    <small>Alerts the campus command center immediately</small>
+                    <small>Alerts the Disaster Command Center immediately</small>
                 </span>
             </button>
         </section>
@@ -92,6 +93,18 @@
                 <p class="field-error" id="severityError"></p>
             </div>
 
+            <div class="field hidden" id="incidentTextField">
+                <label class="field-label" for="incidentText">What happened? <span class="required">*</span></label>
+                <input
+                    type="text"
+                    id="incidentText"
+                    placeholder="e.g. Accident, gas leak, security threat..."
+                    autocomplete="off"
+                >
+                <p class="field-hint">Helps the Disaster Command Center recommend the right response team.</p>
+                <p class="field-error" id="incidentTextError"></p>
+            </div>
+
             <div class="field">
                 <label class="field-label" for="description">Description <span class="required">*</span></label>
                 <textarea
@@ -139,6 +152,10 @@
                     <dt>Location</dt>
                     <dd id="responseLocation">—</dd>
                 </div>
+                <div class="response-row hidden" id="responseRecommendationRow">
+                    <dt>Recommended Response</dt>
+                    <dd id="responseRecommendation">—</dd>
+                </div>
                 <div class="response-row">
                     <dt>Incident ID</dt>
                     <dd id="responseIncident">—</dd>
@@ -159,7 +176,7 @@
     </main>
 
     <footer class="app-footer">
-        <span id="demoNote">Demo backend · FastAPI</span>
+                <span id="demoNote">CampusResQ · Demo backend (FastAPI) · Backend must be running</span>
     </footer>
 
     <script src="app.js"></script>
